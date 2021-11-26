@@ -1,0 +1,35 @@
+{
+  "name": "nodejs-aws-cdk-starter",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w",
+    "cdk": "cdk",
+    "synth": "cdk synth"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/EPAM-JS-Competency-center/nodejs-aws-cdk-starter.git"
+  },
+  "author": "Yahor Simak",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/EPAM-JS-Competency-center/nodejs-aws-cdk-starter/issues"
+  },
+  "devDependencies": {
+    "@types/node": "^10.17.0",
+    "aws-cdk": "^1.94.1",
+    "typescript": "^3.8"
+  },
+  "dependencies": {
+    "@aws-cdk/aws-cloudfront": "^1.94.1",
+    "@aws-cdk/aws-iam": "^1.94.1",
+    "@aws-cdk/aws-s3": "^1.94.1",
+    "@aws-cdk/aws-s3-deployment": "^1.94.1",
+    "@aws-cdk/core": "^1.94.1",
+    "aws-cdk": "^1.94.1"
+  },
+  "homepage": "https://github.com/EPAM-JS-Competency-center/nodejs-aws-cdk-starter#readme"
+}
