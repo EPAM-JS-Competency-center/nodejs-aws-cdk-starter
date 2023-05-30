@@ -5,6 +5,6 @@ Task 2.1 Manual Deployment
 
 Task 2.2 Automated Deployment
 ###[Domain name](d1qg6ersmgr5de.cloudfront.net)
-###[CloudFront]([js-cc-cloudfront-s33.s3.eu-west-1.amazonaws.com](https://js-cc-cloudfront-s33.s3.eu-west-1.amazonaws.com/))
+###[CloudFront](https://js-cc-cloudfront-s33.s3.eu-west-1.amazonaws.com/)
 Task 2.3 Automated Deployment
 Here done
