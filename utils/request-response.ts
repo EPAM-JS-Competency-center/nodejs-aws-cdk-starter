@@ -6,7 +6,7 @@ export const CORS_HEADERS = {
   'Access-Control-Allow-Headers': '*'
 };
 
-export function buildResponse<T>(statusCode, body) {
+export function buildResponse<T>(statusCode: number, body: T) {
   return {
     statusCode,
     headers: CORS_HEADERS,
