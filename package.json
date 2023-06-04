@@ -19,18 +19,22 @@
     "url": "https://github.com/EPAM-JS-Competency-center/nodejs-aws-cdk-starter/issues"
   },
   "devDependencies": {
+    "@aws-cdk/aws-lambda": "^1.203.0",
+    "@aws-sdk/client-apigatewayv2": "^3.345.0",
     "@types/node": "^10.17.0",
-    "aws-cdk": "2.80.0",
-    "typescript": "^4.7.4",
-    "prettier": "2.7.1",
+    "aws-cdk": "^2.78.0",
+    "cdk": "^2.78.0-alpha.0",
     "eslint": "^8.19.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^4.2.1",
-    "eslint-plugin-react": "^7.30.1"
+    "eslint-plugin-react": "^7.30.1",
+    "prettier": "2.7.1",
+    "typescript": "^4.7.4"
   },
   "dependencies": {
-    "aws-cdk-lib": "2.80.0",
-    "constructs": "^10.0.0"
+    "@aws-cdk/aws-apigatewayv2-alpha": "^2.78.0-alpha.0",
+    "@aws-cdk/aws-apigatewayv2-integrations-alpha": "^2.78.0-alpha.0",
+    "aws-cdk-lib": "^2.78.0"
   },
   "homepage": "https://github.com/EPAM-JS-Competency-center/nodejs-aws-cdk-starter#readme"
 }
