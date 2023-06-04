@@ -1,8 +1,6 @@
+import { buildResponse } from "../../utils/request-response";
 import { products } from "../mock-data/data";
 
 export const handler = async (event) => {
-    return {
-      statusCode: 200,
-      body: JSON.stringify(products),
-    };
+    return buildResponse(200, products);
   };
