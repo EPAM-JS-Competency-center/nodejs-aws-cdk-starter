@@ -2,6 +2,7 @@ import { CorsHttpMethod, HttpApi, HttpMethod } from '@aws-cdk/aws-apigatewayv2-a
 import { HttpLambdaIntegration } from '@aws-cdk/aws-apigatewayv2-integrations-alpha';
 import * as cdk from 'aws-cdk-lib';
 import * as lambda from 'aws-cdk-lib/aws-lambda';
+import * as dynamodb from 'aws-cdk-lib/aws-dynamodb';
 
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 
@@ -23,6 +24,23 @@ const getProductById = new NodejsFunction(stack, 'GetProductByIdLambda', {
     functionName: 'getProductsById',
     entry:'product-service/handlers/getProductsById.ts'
 });
+
+const productTable = new dynamodb.Table(stack, 'ProductsTable', {
+    tableName: 'products',
+    partitionKey: { name: 'id', type: dynamodb.AttributeType.STRING },
+    removalPolicy: cdk.RemovalPolicy.DESTROY, // This will delete the table when the stack is destroyed. Use with caution!
+ });
+
+const stockTable = new dynamodb.Table(stack, 'StocksTable', {
+    tableName: 'stocks',
+    partitionKey: { name: 'product_id', type: dynamodb.AttributeType.STRING },
+    removalPolicy: cdk.RemovalPolicy.DESTROY, // This will delete the table when the stack is destroyed. Use with caution!
+ });
+ 
+getProductList.addEnvironment('PRODUCT_TABLE_NAME', productTable.tableName);
+getProductList.addEnvironment('STOCK_TABLE_NAME', stockTable.tableName);
+getProductById.addEnvironment('PRODUCT_TABLE_NAME', productTable.tableName);
+
 
 const api = new HttpApi(stack,"ProductApi", {
     corsPreflight: {
