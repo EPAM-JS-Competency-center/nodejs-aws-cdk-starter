@@ -1,0 +1,104 @@
+{
+    "products": [
+      {
+        "PutRequest": {
+          "Item": {
+            "id": {"S": "b3edfcf2-0641-11ee-be56-0242ac120002"},
+            "title": {"S": "Classic Black Snapback"},
+            "description": {"S": "A timeless black snapback cap with a flat brim and adjustable strap."},
+            "price": {"N": "10"}
+          }
+        }
+      },
+      {
+        "PutRequest": {
+          "Item": {
+            "id": {"S": "b3ee01ca-0641-11ee-be56-0242ac120002"},
+            "title": {"S": "Vintage Denim Snapback"},
+            "description": {"S": "A stylish denim snapback cap with a distressed look and embroidered logo."},
+            "price": {"N": "47"}
+          }
+        }
+      },
+      {
+        "PutRequest": {
+          "Item": {
+            "id": {"S": "b3ee02d8-0641-11ee-be56-0242ac120002"},
+            "title": {"S": "Sports Team Snapback"},
+            "description": {"S": "Support your favorite sports team with this snapback cap featuring their logo."},
+            "price": {"N": "10"}
+          }
+        }
+      },
+      {
+        "PutRequest": {
+          "Item": {
+            "id": {"S": "b3ee03d2-0641-11ee-be56-0242ac120002"},
+            "title": {"S": "Camouflage Snapback"},
+            "description": {"S": "Blend into your surroundings with this camo-patterned snapback cap."},
+            "price": {"N": "35"}
+          }
+        }
+      },
+      {
+        "PutRequest": {
+          "Item": {
+            "id": {"S": "b3ee04e0-0641-11ee-be56-0242ac120002"},
+            "title": {"S": "Colorful Floral Snapback"},
+            "description": {"S": "Make a bold statement with this snapback cap adorned with colorful floral patterns."},
+            "price": {"N": "21"}
+          }
+        }
+      },
+      {
+        "PutRequest": {
+          "Item": {
+            "id": {"S": "b3ee05da-0641-11ee-be56-0242ac120002"},
+            "title": {"S": "Leather Brim Snapback"},
+            "description": {"S": "Add a touch of luxury with this snapback cap featuring a leather brim."},
+            "price": {"N": "10"}
+          }
+        }
+      },
+      {
+        "PutRequest": {
+          "Item": {
+            "id": {"S": "b3ee06ca-0641-11ee-be56-0242ac120002"},
+            "title": {"S": "Logo Embroidered Snapback"},
+            "description": {"S": "Stand out from the crowd with this snapback cap showcasing an intricately embroidered logo."},
+            "price": {"N": "55"}
+          }
+        }
+      },
+      {
+        "PutRequest": {
+          "Item": {
+            "id": {"S": "b3ee07ba-0641-11ee-be56-0242ac120002"},
+            "title": {"S": "Neon Glow Snapback"},
+            "description": {"S": "Light up the night with this neon glow snapback cap that catches everyone's attention."},
+            "price": {"N": "98"}
+          }
+        }
+      },
+      {
+        "PutRequest": {
+          "Item": {
+            "id": {"S": "b3ee08aa-0641-11ee-be56-0242ac120002"},
+            "title": {"S": "Mesh Back Snapback"},
+            "description": {"S": "Stay cool and comfortable with this snapback cap featuring a breathable mesh back."},
+            "price": {"N": "19"}
+          }
+        }
+      },
+      {
+        "PutRequest": {
+          "Item": {
+            "id": {"S": "b3ee0cf6-0641-11ee-be56-0242ac120002"},
+            "title": {"S": "Two-Tone Snapback"},
+            "description": {"S": "Combine style and contrast with this two-tone snapback cap that adds a unique touch."},
+            "price": {"N": "122"}
+          }
+        }
+      }
+    ]
+}
