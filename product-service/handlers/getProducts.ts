@@ -1,56 +1,64 @@
 import * as aws from 'aws-sdk';
 import { buildResponse } from "../../utils/request-response";
-//import { products } from "../mock-data/data";
 
-const dynamodb = new aws.DynamoDB();
+const dynamo = new aws.DynamoDB.DocumentClient();
 
-export const handler = async () => {
-  const tableName = process.env.PRODUCT_TABLE_NAME; // Read the table name from environment variables
-
-  if (!tableName) {
-    console.error('PRODUCT_TABLE_NAME is not defined in the environment variables');
+const scanProducts = async () => {
+  const productTableName = process.env.PRODUCT_TABLE_NAME;
+  if (!productTableName  ) {
+    console.error('Product tables is not defined in the environment variables');
     return buildResponse(500, 'Internal Server Error');
   }
-
-  const params = {
-    TableName: tableName,
-  };
-
   try {
-    const data = await dynamodb.scan(params).promise();
-    const products = data.Items;
-
-    // Join stocks table
-    const stockTableName = process.env.STOCK_TABLE_NAME; // Read the stock table name from environment variables
-
-    if (stockTableName) {
-      const stockParams = {
-        TableName: stockTableName,
-        ProjectionExpression: 'product_id, count', // Only retrieve product_id and count columns
-      };
-
-      const stockData = await dynamodb.scan(stockParams).promise();
-      const stockItems = stockData.Items;
-
-      // Map stock data to products
-      const productsWithStock = products?.map((product) => {
-        const productId = product.id; // Assuming the product id is available in the product object
-        const stockItem = stockItems?.find((item) => item.product_id.S === productId);
-
-        const stockCount = stockItem ? stockItem.count.N : 0; // Assuming count is stored as a number attribute
-
-        return {
-          ...product,
-          stock: stockCount,
-        };
-      });
-
-      return buildResponse(200, productsWithStock);
-    }
-
-    return buildResponse(200, products);
+    const scanResults = await dynamo.scan({
+      TableName: productTableName,
+    }).promise();
+    return scanResults;
   } catch (error) {
-      console.error('Error retrieving products from DynamoDB', error);
-      return buildResponse(500, 'Error retrieving products from DynamoDB');
+    console.error('Error scanning products:', error);
+    throw error; // Re-throw the error to be caught by the calling function or Lambda runtime
   }
 };
+
+const scanStocks = async () => {
+  const stocksTableName = process.env.STOCK_TABLE_NAME;
+  if (!stocksTableName  ) {
+    console.error('Product tables is not defined in the environment variables');
+    return buildResponse(500, 'Internal Server Error');
+  }
+  try {
+    const scanResults = await dynamo.scan({
+      TableName: stocksTableName,
+    }).promise();
+    return scanResults;
+  } catch (error) {
+    console.error('Error scanning stocks:', error);
+    throw error; // Re-throw the error to be caught by the calling function or Lambda runtime
+  }
+};
+
+exports.handler = async (event) => {  
+  try {
+    const scanProductResults = await scanProducts();
+    const scanStocksResults = await scanStocks();
+
+    const productsWithStock = scanProductResults.Items?.map((product) => {
+      const productId = product.id; // Assuming the product id is available in the product object
+      const stockItem = scanStocksResults.Items?.find((item) => item.product_id === productId);
+
+      const stockCount = stockItem ? parseInt(stockItem.count) : 0;  // Assuming count is stored as a number attribute
+
+      return {
+        ...product,
+        stock: stockCount,
+      };
+    });
+
+    return buildResponse(200, productsWithStock);
+  } catch (error) {
+    console.error('Error executing Lambda handler:', error);
+    return buildResponse(500, { error: 'Internal Server Error' });
+  }
+};
+
+

@@ -2,9 +2,10 @@ import { CorsHttpMethod, HttpApi, HttpMethod } from '@aws-cdk/aws-apigatewayv2-a
 import { HttpLambdaIntegration } from '@aws-cdk/aws-apigatewayv2-integrations-alpha';
 import * as cdk from 'aws-cdk-lib';
 import * as lambda from 'aws-cdk-lib/aws-lambda';
-import * as dynamodb from 'aws-cdk-lib/aws-dynamodb';
-
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
+
+const PRODUCT_TABLE_NAME = 'products';
+const STOCK_TABLE_NAME = 'stocks';
 
 const app = new cdk.App;
 const stack = new cdk.Stack(app, 'ProductSeerviceStack', {env: {region:'eu-west-1'}});
@@ -16,7 +17,11 @@ const sharedLambdaProps = {
 const getProductList = new NodejsFunction (stack, "GetProductListLambda", {
     ...sharedLambdaProps,
     functionName: 'getProductList',
-    entry: 'product-service/handlers/getProducts.ts'
+    entry: 'product-service/handlers/getProducts.ts',
+    environment: {
+        PRODUCT_TABLE_NAME: "products",
+        STOCK_TABLE_NAME: "stocks",
+      },
 });
 
 const getProductById = new NodejsFunction(stack, 'GetProductByIdLambda', {
@@ -25,21 +30,12 @@ const getProductById = new NodejsFunction(stack, 'GetProductByIdLambda', {
     entry:'product-service/handlers/getProductsById.ts'
 });
 
-const productTable = new dynamodb.Table(stack, 'ProductsTable', {
-    tableName: 'products',
-    partitionKey: { name: 'id', type: dynamodb.AttributeType.STRING },
-    removalPolicy: cdk.RemovalPolicy.DESTROY, // This will delete the table when the stack is destroyed. Use with caution!
- });
 
-const stockTable = new dynamodb.Table(stack, 'StocksTable', {
-    tableName: 'stocks',
-    partitionKey: { name: 'product_id', type: dynamodb.AttributeType.STRING },
-    removalPolicy: cdk.RemovalPolicy.DESTROY, // This will delete the table when the stack is destroyed. Use with caution!
- });
  
-getProductList.addEnvironment('PRODUCT_TABLE_NAME', productTable.tableName);
-getProductList.addEnvironment('STOCK_TABLE_NAME', stockTable.tableName);
-getProductById.addEnvironment('PRODUCT_TABLE_NAME', productTable.tableName);
+getProductList.addEnvironment('PRODUCT_TABLE_NAME', PRODUCT_TABLE_NAME);
+getProductList.addEnvironment('STOCK_TABLE_NAME', STOCK_TABLE_NAME);
+getProductById.addEnvironment('PRODUCT_TABLE_NAME', PRODUCT_TABLE_NAME);
+getProductById.addEnvironment('PRODUCT_TABLE_NAME', STOCK_TABLE_NAME);
 
 
 const api = new HttpApi(stack,"ProductApi", {
