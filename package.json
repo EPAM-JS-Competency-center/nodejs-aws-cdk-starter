@@ -8,7 +8,9 @@
     "watch": "tsc -w",
     "cdk": "cdk",
     "synth": "cdk synth",
-    "test": "jest"
+    "test": "jest",
+    "fillProducts" : "aws dynamodb batch-write-item --request-items file://db-scripts/add-products.json",
+    "fillStocks": "aws dynamodb batch-write-item --request-items file://db-scripts/add-stocks.json"
   },
   "repository": {
     "type": "git",

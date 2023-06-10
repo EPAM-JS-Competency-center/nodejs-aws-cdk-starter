@@ -35,7 +35,7 @@ const getProductById = new NodejsFunction(stack, 'GetProductByIdLambda', {
 getProductList.addEnvironment('PRODUCT_TABLE_NAME', PRODUCT_TABLE_NAME);
 getProductList.addEnvironment('STOCK_TABLE_NAME', STOCK_TABLE_NAME);
 getProductById.addEnvironment('PRODUCT_TABLE_NAME', PRODUCT_TABLE_NAME);
-getProductById.addEnvironment('PRODUCT_TABLE_NAME', STOCK_TABLE_NAME);
+getProductById.addEnvironment('STOCKS_TABLE_NAME', STOCK_TABLE_NAME);
 
 
 const api = new HttpApi(stack,"ProductApi", {
