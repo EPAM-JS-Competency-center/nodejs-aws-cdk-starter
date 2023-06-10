@@ -43,6 +43,8 @@ type GetProductById = {
   
 
 export const handler = async (event: GetProductById) => {
+  console.log('Incoming request:', event);
+  console.log('Incoming request parameters:', event.pathParameters);
   try {
     const productId = event.pathParameters.productId;
     const product = await getProductById(productId);

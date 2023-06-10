@@ -30,13 +30,19 @@ const getProductById = new NodejsFunction(stack, 'GetProductByIdLambda', {
     entry:'product-service/handlers/getProductsById.ts'
 });
 
+const createProduct = new NodejsFunction(stack, 'CreateProductLambda', {
+    ...sharedLambdaProps,
+    functionName: 'createProduct',
+    entry: 'product-service/handlers/createProduct.ts'
+});
 
  
 getProductList.addEnvironment('PRODUCT_TABLE_NAME', PRODUCT_TABLE_NAME);
 getProductList.addEnvironment('STOCK_TABLE_NAME', STOCK_TABLE_NAME);
 getProductById.addEnvironment('PRODUCT_TABLE_NAME', PRODUCT_TABLE_NAME);
 getProductById.addEnvironment('STOCKS_TABLE_NAME', STOCK_TABLE_NAME);
-
+createProduct.addEnvironment('PRODUCT_TABLE_NAME', PRODUCT_TABLE_NAME);
+createProduct.addEnvironment('STOCKS_TABLE_NAME', STOCK_TABLE_NAME);
 
 const api = new HttpApi(stack,"ProductApi", {
     corsPreflight: {
@@ -56,4 +62,10 @@ api.addRoutes({
     integration: new HttpLambdaIntegration('GetProductByIdIntegration', getProductById ),
     path: '/products/{productId}',
     methods: [HttpMethod.GET]
+});
+
+api.addRoutes({
+    integration: new HttpLambdaIntegration('CreateProductIntegration', createProduct ),
+    path: '/products',
+    methods: [HttpMethod.POST]
 });

@@ -38,6 +38,7 @@ const scanStocks = async () => {
 };
 
 exports.handler = async (event) => {  
+  console.log('Incoming request:', event);
   try {
     const scanProductResults = await scanProducts();
     const scanStocksResults = await scanStocks();
