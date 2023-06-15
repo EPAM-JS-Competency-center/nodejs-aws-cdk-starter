@@ -8,7 +8,9 @@
     "watch": "tsc -w",
     "cdk": "cdk",
     "synth": "cdk synth",
-    "test": "jest"
+    "test": "jest",
+    "fillProducts" : "aws dynamodb batch-write-item --request-items file://db-scripts/add-products.json",
+    "fillStocks": "aws dynamodb batch-write-item --request-items file://db-scripts/add-stocks.json"
   },
   "repository": {
     "type": "git",
@@ -38,6 +40,7 @@
   "dependencies": {
     "@aws-cdk/aws-apigatewayv2-alpha": "^2.78.0-alpha.0",
     "@aws-cdk/aws-apigatewayv2-integrations-alpha": "^2.78.0-alpha.0",
+    "@aws-cdk/aws-dynamodb": "^1.203.0",
     "aws-cdk-lib": "^2.78.0",
     "ts-jest": "^29.1.0"
   },

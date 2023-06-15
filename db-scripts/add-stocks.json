@@ -1,0 +1,76 @@
+{
+    "stocks": [
+      {
+        "PutRequest": {
+          "Item": {
+            "product_id": {"S": "b3edfcf2-0641-11ee-be56-0242ac120002"},
+            "count": {"N": "5"}
+          }
+        }
+      },
+      {
+        "PutRequest": {
+          "Item": {
+            "product_id": {"S": "b3ee01ca-0641-11ee-be56-0242ac120002"},
+            "count": {"N": "10"}
+          }
+        }
+      },
+      {
+        "PutRequest": {
+          "Item": {
+            "product_id": {"S": "b3ee02d8-0641-11ee-be56-0242ac120002"},
+            "count": {"N": "5"}
+          }
+        }
+      },
+      {
+        "PutRequest": {
+          "Item": {
+            "product_id": {"S": "b3ee03d2-0641-11ee-be56-0242ac120002"},
+            "count": {"N": "9"}
+          }
+        }
+      },
+      {
+        "PutRequest": {
+          "Item": {
+            "product_id": {"S": "b3ee04e0-0641-11ee-be56-0242ac120002"},
+            "count": {"N": "12"}
+          }
+        }
+      },
+      {
+        "PutRequest": {
+          "Item": {
+            "product_id": {"S": "b3ee06ca-0641-11ee-be56-0242ac120002"},
+            "count": {"N": "4"}
+          }
+        }
+      },
+      {
+        "PutRequest": {
+          "Item": {
+            "product_id": {"S": "b3ee07ba-0641-11ee-be56-0242ac120002"},
+            "count": {"N": "1"}
+          }
+        }
+      },
+      {
+        "PutRequest": {
+          "Item": {
+            "product_id": {"S": "b3ee08aa-0641-11ee-be56-0242ac120002"},
+            "count": {"N": "7"}
+          }
+        }
+      },
+      {
+        "PutRequest": {
+          "Item": {
+            "product_id": {"S": "b3ee0cf6-0641-11ee-be56-0242ac120002"},
+            "count": {"N": "2"}
+          }
+        }
+      }
+    ]
+}

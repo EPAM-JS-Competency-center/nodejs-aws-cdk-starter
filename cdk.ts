@@ -2,8 +2,10 @@ import { CorsHttpMethod, HttpApi, HttpMethod } from '@aws-cdk/aws-apigatewayv2-a
 import { HttpLambdaIntegration } from '@aws-cdk/aws-apigatewayv2-integrations-alpha';
 import * as cdk from 'aws-cdk-lib';
 import * as lambda from 'aws-cdk-lib/aws-lambda';
-
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
+
+const PRODUCT_TABLE_NAME = 'products';
+const STOCK_TABLE_NAME = 'stocks';
 
 const app = new cdk.App;
 const stack = new cdk.Stack(app, 'ProductSeerviceStack', {env: {region:'eu-west-1'}});
@@ -15,7 +17,11 @@ const sharedLambdaProps = {
 const getProductList = new NodejsFunction (stack, "GetProductListLambda", {
     ...sharedLambdaProps,
     functionName: 'getProductList',
-    entry: 'product-service/handlers/getProducts.ts'
+    entry: 'product-service/handlers/getProducts.ts',
+    environment: {
+        PRODUCT_TABLE_NAME: "products",
+        STOCK_TABLE_NAME: "stocks",
+      },
 });
 
 const getProductById = new NodejsFunction(stack, 'GetProductByIdLambda', {
@@ -23,6 +29,20 @@ const getProductById = new NodejsFunction(stack, 'GetProductByIdLambda', {
     functionName: 'getProductsById',
     entry:'product-service/handlers/getProductsById.ts'
 });
+
+const createProduct = new NodejsFunction(stack, 'CreateProductLambda', {
+    ...sharedLambdaProps,
+    functionName: 'createProduct',
+    entry: 'product-service/handlers/createProduct.ts'
+});
+
+ 
+getProductList.addEnvironment('PRODUCT_TABLE_NAME', PRODUCT_TABLE_NAME);
+getProductList.addEnvironment('STOCK_TABLE_NAME', STOCK_TABLE_NAME);
+getProductById.addEnvironment('PRODUCT_TABLE_NAME', PRODUCT_TABLE_NAME);
+getProductById.addEnvironment('STOCKS_TABLE_NAME', STOCK_TABLE_NAME);
+createProduct.addEnvironment('PRODUCT_TABLE_NAME', PRODUCT_TABLE_NAME);
+createProduct.addEnvironment('STOCKS_TABLE_NAME', STOCK_TABLE_NAME);
 
 const api = new HttpApi(stack,"ProductApi", {
     corsPreflight: {
@@ -42,4 +62,10 @@ api.addRoutes({
     integration: new HttpLambdaIntegration('GetProductByIdIntegration', getProductById ),
     path: '/products/{productId}',
     methods: [HttpMethod.GET]
+});
+
+api.addRoutes({
+    integration: new HttpLambdaIntegration('CreateProductIntegration', createProduct ),
+    path: '/products',
+    methods: [HttpMethod.POST]
 });
