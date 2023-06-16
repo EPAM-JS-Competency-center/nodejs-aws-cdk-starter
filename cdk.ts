@@ -3,6 +3,7 @@ import { HttpLambdaIntegration } from '@aws-cdk/aws-apigatewayv2-integrations-al
 import * as cdk from 'aws-cdk-lib';
 import * as lambda from 'aws-cdk-lib/aws-lambda';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
+import { PolicyStatement } from 'aws-cdk-lib/aws-iam';
 
 const PRODUCT_TABLE_NAME = 'products';
 const STOCK_TABLE_NAME = 'stocks';
@@ -69,3 +70,35 @@ api.addRoutes({
     path: '/products',
     methods: [HttpMethod.POST]
 });
+
+
+
+const importApp = new cdk.App;
+const importStack = new cdk.Stack(importApp, 'ImportServiceStack', {env: {region:'eu-west-1'}});
+
+const importApi = new HttpApi(importStack,"ImportProductApi", {
+    corsPreflight: {
+        allowHeaders: ['*'],
+        allowOrigins: ['*'],
+        allowMethods: [CorsHttpMethod.ANY]
+    }
+});
+
+const importProductsFile = new NodejsFunction (importStack, "importProductsFile", {
+    ...sharedLambdaProps,
+    functionName: 'importProductsFile',
+    entry: 'import-service/handlers/importProduct.ts',
+});
+
+importApi.addRoutes({
+    integration: new HttpLambdaIntegration('ImportProductsIntegration', importProductsFile),
+    path:'/import',
+    methods:[HttpMethod.GET]
+});
+
+importProductsFile.addToRolePolicy(
+    new PolicyStatement({
+      actions: ['s3:GetObject', 's3:PutObject'],
+      resources: ['arn:aws:s3:::aws-import-bucket/*'],
+    })
+  );
