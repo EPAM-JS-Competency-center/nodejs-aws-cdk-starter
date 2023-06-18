@@ -1,9 +1,11 @@
 import { CorsHttpMethod, HttpApi, HttpMethod } from '@aws-cdk/aws-apigatewayv2-alpha';
 import { HttpLambdaIntegration } from '@aws-cdk/aws-apigatewayv2-integrations-alpha';
 import * as cdk from 'aws-cdk-lib';
+import * as s3 from 'aws-cdk-lib/aws-s3';
 import * as lambda from 'aws-cdk-lib/aws-lambda';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { PolicyStatement } from 'aws-cdk-lib/aws-iam';
+import { S3EventSource } from 'aws-cdk-lib/aws-lambda-event-sources';
 
 const PRODUCT_TABLE_NAME = 'products';
 const STOCK_TABLE_NAME = 'stocks';
@@ -72,7 +74,6 @@ api.addRoutes({
 });
 
 
-
 const importApp = new cdk.App;
 const importStack = new cdk.Stack(importApp, 'ImportServiceStack', {env: {region:'eu-west-1'}});
 
@@ -84,11 +85,29 @@ const importApi = new HttpApi(importStack,"ImportProductApi", {
     }
 });
 
+const importBucket = s3.Bucket.fromBucketName(importStack, 'Import-Bucket', 'aws-import-bucket');
+
 const importProductsFile = new NodejsFunction (importStack, "importProductsFile", {
     ...sharedLambdaProps,
     functionName: 'importProductsFile',
-    entry: 'import-service/handlers/importProduct.ts',
+    entry: 'import-service/handlers/importProducts.ts',
 });
+
+const importFileParser = new NodejsFunction(importStack, 'importFileParser', {
+    ...sharedLambdaProps,
+    functionName: 'importFileParser',
+    entry: 'import-service/handlers/importFileParser.ts',
+  });
+
+importBucket.grantRead(importProductsFile);
+
+// Add the S3 event trigger to importFileParser
+importFileParser.addEventSource(
+    new S3EventSource(importBucket as s3.Bucket, {
+      events: [s3.EventType.OBJECT_CREATED],
+      filters: [{ prefix: 'uploaded/' }],
+    })
+  );
 
 importApi.addRoutes({
     integration: new HttpLambdaIntegration('ImportProductsIntegration', importProductsFile),
@@ -100,5 +119,26 @@ importProductsFile.addToRolePolicy(
     new PolicyStatement({
       actions: ['s3:GetObject', 's3:PutObject'],
       resources: ['arn:aws:s3:::aws-import-bucket/*'],
+    })
+  );
+
+importFileParser.addToRolePolicy(
+    new PolicyStatement({
+        actions: ['s3:GetObject'],
+        resources: ['arn:aws:s3:::aws-import-bucket/uploaded/*'],   
+    })
+);
+
+importFileParser.addToRolePolicy(
+    new PolicyStatement({
+      actions: ['s3:GetObject'],
+      resources: ['arn:aws:s3:::aws-import-bucket/uploaded/*'],
+    })
+  );
+
+importFileParser.addToRolePolicy(
+    new PolicyStatement({
+      actions: ['logs:CreateLogStream', 'logs:CreateLogGroup', 'logs:PutLogEvents'],
+      resources: ['arn:aws:logs:*:*:*'],
     })
   );
