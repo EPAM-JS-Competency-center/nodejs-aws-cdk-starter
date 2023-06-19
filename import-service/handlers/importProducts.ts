@@ -1,6 +1,6 @@
 import { buildResponse } from "../../utils/request-response";
 import { S3 } from 'aws-sdk';
-exports.handler = async (event) => { 
+export const handler = async (event) => { 
     try {
         // Extract the name parameter from the query string
         const { name } = event.queryStringParameters;
