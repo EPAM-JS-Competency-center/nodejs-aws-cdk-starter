@@ -130,8 +130,23 @@ importFileParser.addToRolePolicy(
 );
 
 importFileParser.addToRolePolicy(
+  new PolicyStatement({
+      actions: ['s3:GetObject',
+                's3:PutObject',
+                's3:DeleteObject',
+                's3:CopyObject'
+              ],
+      resources: ['arn:aws:s3:::aws-import-bucket/parsed/*'],   
+  })
+);
+
+importFileParser.addToRolePolicy(
     new PolicyStatement({
-      actions: ['s3:GetObject'],
+      actions: ['s3:GetObject',
+                's3:PutObject',
+                's3:DeleteObject',
+                's3:CopyObject'
+               ],
       resources: ['arn:aws:s3:::aws-import-bucket/uploaded/*'],
     })
   );
