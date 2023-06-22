@@ -10,10 +10,11 @@ export const handler = async (event) => {
     
         // Create a new instance of the S3 service
         const s3 = new S3();
-        const signedUrl = await s3.getSignedUrlPromise('getObject', {
+        const signedUrl = await s3.getSignedUrlPromise('putObject', {
             Bucket: 'aws-import-bucket',
             Key: key,
             Expires: 3600, // URL expiration time in seconds (e.g., 1 hour)
+            ContentType: "text/csv",
           });
           return {
             statusCode: 200,
