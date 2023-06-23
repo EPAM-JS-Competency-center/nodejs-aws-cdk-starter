@@ -9,7 +9,7 @@
     "cdk": "cdk",
     "synth": "cdk synth",
     "test": "jest",
-    "fillProducts" : "aws dynamodb batch-write-item --request-items file://db-scripts/add-products.json",
+    "fillProducts": "aws dynamodb batch-write-item --request-items file://db-scripts/add-products.json",
     "fillStocks": "aws dynamodb batch-write-item --request-items file://db-scripts/add-stocks.json"
   },
   "repository": {
@@ -27,7 +27,7 @@
     "@types/jest": "^29.5.2",
     "@types/node": "^10.17.0",
     "aws-cdk": "^2.78.0",
-    "aws-sdk": "^2.1390.0",
+    "aws-sdk": "^2.1399.0",
     "cdk": "^2.78.0-alpha.0",
     "eslint": "^8.19.0",
     "eslint-config-prettier": "^8.5.0",
@@ -42,6 +42,8 @@
     "@aws-cdk/aws-apigatewayv2-integrations-alpha": "^2.78.0-alpha.0",
     "@aws-cdk/aws-dynamodb": "^1.203.0",
     "aws-cdk-lib": "^2.78.0",
+    "aws-sdk-mock": "^5.8.0",
+    "csv-parser": "^3.0.0",
     "ts-jest": "^29.1.0"
   },
   "homepage": "https://github.com/EPAM-JS-Competency-center/nodejs-aws-cdk-starter#readme"
