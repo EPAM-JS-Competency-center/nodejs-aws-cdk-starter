@@ -5,17 +5,35 @@ import * as s3 from 'aws-cdk-lib/aws-s3';
 import * as lambda from 'aws-cdk-lib/aws-lambda';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { PolicyStatement } from 'aws-cdk-lib/aws-iam';
-import { S3EventSource } from 'aws-cdk-lib/aws-lambda-event-sources';
+import { S3EventSource, SqsEventSource } from 'aws-cdk-lib/aws-lambda-event-sources';
+import * as sqs from 'aws-cdk-lib/aws-sqs';
+import * as sns from 'aws-cdk-lib/aws-sns';
 
 const PRODUCT_TABLE_NAME = 'products';
 const STOCK_TABLE_NAME = 'stocks';
 
+
+
 const app = new cdk.App;
 const stack = new cdk.Stack(app, 'ProductSeerviceStack', {env: {region:'eu-west-1'}});
 
+const importProductTopic = new sns.Topic(stack, "ImportProductTopic", {
+  topicName:"import-products-topic"
+});
+const catalogItemsQueue = new sqs.Queue(stack, 'CatalogItemsQueue', {
+  queueName: 'catalogItemsQueue',
+});
+
 const sharedLambdaProps = {
     runtime: lambda.Runtime.NODEJS_18_X,
+    IMPORT_PRODUCT_TOPIC_ARN: importProductTopic.topicArn
 };
+
+const catalogBatchProcess = new NodejsFunction (stack, "CatalogBatchProcessLambda", {
+  ...sharedLambdaProps,
+  functionName: 'catalogBatchProcess',
+  entry: 'product-service/handlers/catalogBatchProcess.ts',
+});
 
 const getProductList = new NodejsFunction (stack, "GetProductListLambda", {
     ...sharedLambdaProps,
@@ -157,3 +175,6 @@ importFileParser.addToRolePolicy(
       resources: ['arn:aws:logs:*:*:*'],
     })
   );
+  importProductTopic.grantPublish(catalogBatchProcess);
+  catalogItemsQueue.grantSendMessages(importFileParser);
+  catalogBatchProcess.addEventSource(new SqsEventSource(catalogItemsQueue, {batchSize:5}));

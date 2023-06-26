@@ -19,7 +19,7 @@ const validateProduct = (product) => {
   return true;
 };
 
-const createProduct = async (product) => {
+export const createProduct = async (product) => {
   try {
     await dynamo.transactWrite({
       TransactItems: [
@@ -48,7 +48,7 @@ const createProduct = async (product) => {
       ]
     }).promise();
 
-    return true;
+    return product;
   } catch (error) {
     console.error('Error creating product:', error);
     throw error;

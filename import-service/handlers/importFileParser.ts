@@ -1,56 +1,44 @@
 import * as AWS from 'aws-sdk';
-import csv from 'csv-parser';
 
-exports.handler = async (event) => { 
-    const { bucket, key } = event;
+import { CopyObjectCommand, DeleteObjectCommand, GetObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import { S3 } from 'aws-sdk';
+import { Readable } from "stream";
+import cvs from "csv-parser";
 
-  if (!bucket || !key) {
-    // Handle missing parameters
-    return { statusCode: 400, body: 'Missing required parameters.' };
-  }
-  const name = key.split('/')[1];
-  const s3 = new AWS.S3();
-
-  try {
-    const getObjectParams = {
-      Bucket: bucket,
-      Key: key
+export const handler = async (
+    event
+): Promise<any> => {
+    const bucket = event.Records[0].s3.bucket.name;
+    const key = event.Records[0].s3.object.key;
+    const parsedKey = key.replace('uploaded', 'parsed')
+    const params = {
+        Bucket: bucket,
+        Key: key,
     };
-
-    const s3Object = await s3.getObject(getObjectParams).promise();
-    const { PassThrough } = require('stream');
-    const readableStream = new PassThrough();
-    readableStream.end(s3Object.Body);
-    // Parse the CSV data using csv-parser
-    const records = [];
-    readableStream.pipe(csv())
-      .on('data', (record) => {
-        // Log each record to CloudWatch
-        console.log(record);
-        records.push(record);
-      })
-      .on('end', async () => {
-        console.log('CSV parsing completed.');
-        try {
-          const copyObjectParams = {
-            Bucket: bucket,
-            CopySource: `${bucket}/${key}`,
-            Key: `parsed/${name}`
-          };
-          await s3.copyObject(copyObjectParams).promise();
-          const deleteObjectParams = {
-            Bucket: bucket,
-            Key: key
-          };
-          await s3.deleteObject(deleteObjectParams).promise();
-          console.log('File moved to "parsed" folder.');
-        }catch (error) {
-          console.error('Error moving file:', error);
-        }
-      });
-    return { statusCode: 200, body: 'CSV parsing initiated.' };
-  } catch (error) {
-    console.error('Error:', error);
-    return { statusCode: 500, body: 'Internal Server Error  ${error}' };  
-  }
-}
+    const client = new S3Client({})
+    const getCommand = new GetObjectCommand(params);
+    const deleteCommand = new DeleteObjectCommand(params);
+    const copyCommand = new CopyObjectCommand({
+        CopySource: `${bucket}/${key}`,
+        Bucket: bucket,
+        Key: parsedKey,
+    });
+    const parser = cvs()
+    try {
+        const response = await client.send(getCommand);
+        const readStream = response.Body as Readable
+        await new Promise((resolve) => {
+            readStream.pipe(parser)
+                .on('data', (data) => console.log('parsed stream data', data))
+                .on('end', async () => {
+                    const copyRes = await client.send(copyCommand);
+                    console.log(copyRes, 'copy to parsed')
+                    const deleteRes = await client.send(deleteCommand);
+                    console.log(deleteRes, 'delete from uploaded')
+                    resolve(null)
+                });
+        })
+    } catch (err) {
+        console.log(err)
+    }
+};
