@@ -4,7 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "tsc",
+    "start": "vite website",
+    "build": "tsc && vite build",
+    "bootstrap": "cdk bootstrap --profile=MyUser",
+    "deploy": "cdk deploy --profile=MyUser --require-approval=never",
     "watch": "tsc -w",
     "cdk": "cdk",
     "synth": "cdk synth"
@@ -29,7 +32,8 @@
     "@aws-cdk/aws-s3": "^1.94.1",
     "@aws-cdk/aws-s3-deployment": "^1.94.1",
     "@aws-cdk/core": "^1.94.1",
-    "aws-cdk": "^1.94.1"
+    "aws-cdk": "^1.94.1",
+    "vite": "^2.9.13"
   },
   "homepage": "https://github.com/EPAM-JS-Competency-center/nodejs-aws-cdk-starter#readme"
 }
